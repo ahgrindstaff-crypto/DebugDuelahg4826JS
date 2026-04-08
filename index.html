@@ -16,18 +16,19 @@
         .wrong { color: #ff3131; text-shadow: 0 0 5px #ff3131; }
         
         /* Intro Table Styles */
-        .intro-screen h1 { text-align: center; color: #00ff41; text-shadow: 0 0 10px #00ff41; }
+        h1 { text-align: center; color: #00ff41; text-shadow: 0 0 10px #00ff41; }
         table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.9em; }
         th, td { border: 1px solid #00ff41; padding: 12px; text-align: left; }
         th { background: #003300; }
         .example { color: #9cdcfe; font-style: italic; }
-        .start-btn { display: block; width: 250px; margin: 20px auto; }
+        .start-btn { display: block; width: 300px; margin: 30px auto; font-weight: bold; font-size: 1.2em; }
+        .hidden { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container" id="game-container">
-    <div id="screen-content" class="intro-screen">
+<div class="container">
+    <div id="intro-screen">
         <h1>SYSTEM BRIEFING: ERROR PROTOCOLS</h1>
         <p>Analyze the four main bug types before beginning the simulation:</p>
         
@@ -39,27 +40,49 @@
             </tr>
             <tr>
                 <td><strong>Syntax Error</strong></td>
-                <td>Broken grammar. The computer cannot translate the code.</td>
+                <td>Broken grammar. The computer cannot read the code.</td>
                 <td class="example">if x == 5 (missing colon)</td>
             </tr>
             <tr>
                 <td><strong>Name Error</strong></td>
-                <td>Referencing a variable or function that doesn't exist.</td>
-                <td class="example">print(total) (if total isn't defined)</td>
+                <td>Using a variable or function that doesn't exist.</td>
+                <td class="example">print(y) (when y isn't defined)</td>
             </tr>
             <tr>
                 <td><strong>Type Error</strong></td>
-                <td>Performing an operation on the wrong data type.</td>
-                <td class="example">"High Score: " + 10 (string + int)</td>
+                <td>Wrong data type (like adding words to numbers).</td>
+                <td class="example">"Score: " + 10 (string + int)</td>
             </tr>
             <tr>
                 <td><strong>Logic Error</strong></td>
-                <td>The code runs, but the output is not what you intended.</td>
-                <td class="example">area = w + h (should be multiplication)</td>
+                <td>Code runs, but the answer is wrong.</td>
+                <td class="example">area = w + h (should be w * h)</td>
             </tr>
         </table>
         
         <button class="start-btn" onclick="startGame()">INITIALIZE DEBUG PROTOCOL</button>
+    </div>
+
+    <div id="game-screen" class="hidden">
+        <div class="stats">
+            <span id="progress">Snippet: 1/50</span>
+            <span id="score">Score: 0</span>
+        </div>
+        <div class="code-box" id="code-display">// INITIALIZING...</div>
+        <div class="options">
+            <button onclick="checkAnswer('Syntax Error')">Syntax Error</button>
+            <button onclick="checkAnswer('Name Error')">Name Error</button>
+            <button onclick="checkAnswer('Type Error')">Type Error</button>
+            <button onclick="checkAnswer('Logic Error')">Logic Error</button>
+        </div>
+        <div id="feedback" class="feedback"></div>
+    </div>
+
+    <div id="end-screen" class="hidden">
+        <h1>MISSION COMPLETE</h1>
+        <h3 id="final-accuracy" style="text-align:center">Accuracy: 0%</h3>
+        <h3 id="final-score" style="text-align:center">Bugs Eliminated: 0/50</h3>
+        <button class="start-btn" onclick="location.reload()">REBOOT SYSTEM</button>
     </div>
 </div>
 
@@ -121,20 +144,8 @@
     let score = 0;
 
     function startGame() {
-        document.getElementById('game-container').innerHTML = `
-            <div class="stats">
-                <span id="progress">Snippet: 1/50</span>
-                <span id="score">Score: 0</span>
-            </div>
-            <div class="code-box" id="code-display">// INITIALIZING...</div>
-            <div class="options">
-                <button onclick="checkAnswer('Syntax Error')">Syntax Error</button>
-                <button onclick="checkAnswer('Name Error')">Name Error</button>
-                <button onclick="checkAnswer('Type Error')">Type Error</button>
-                <button onclick="checkAnswer('Logic Error')">Logic Error</button>
-            </div>
-            <div id="feedback" class="feedback"></div>
-        `;
+        document.getElementById('intro-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
         loadSnippet();
     }
 
@@ -144,12 +155,7 @@
             document.getElementById('progress').innerText = `Snippet: ${currentIndex + 1}/${snippets.length}`;
             document.getElementById('feedback').innerText = "";
         } else {
-            document.getElementById('game-container').innerHTML = `
-                <h1>MISSION COMPLETE</h1>
-                <h3>Accuracy: ${(score/50*100).toFixed(0)}%</h3>
-                <h3>Bugs Eliminated: ${score}/50</h3>
-                <button class="start-btn" onclick="location.reload()">REBOOT SYSTEM</button>
-            `;
+            showEndScreen();
         }
     }
 
@@ -167,6 +173,13 @@
             currentIndex++;
             loadSnippet();
         }, 1200);
+    }
+
+    function showEndScreen() {
+        document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('end-screen').classList.remove('hidden');
+        document.getElementById('final-accuracy').innerText = `Accuracy: ${(score/50*100).toFixed(0)}%`;
+        document.getElementById('final-score').innerText = `Bugs Eliminated: ${score}/50`;
     }
 </script>
 
