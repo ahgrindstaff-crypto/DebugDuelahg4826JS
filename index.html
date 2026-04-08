@@ -41,14 +41,66 @@
 <script>
     // A sample of the 50 snippets (Logic truncated for brevity, but you can paste in all 50)
     const snippets = [
-        { code: "print(\"Hello World' \n# Missing closing quote", type: "Syntax Error" },
-        { code: "x = 10\nprint(y)\n# y is not defined", type: "Name Error" },
-        { code: "age = \"15\"\nprint(age + 5)\n# Adding string to int", type: "Type Error" },
-        { code: "def get_area(w, h):\n  return w + h \n# Should be w * h", type: "Logic Error" },
-        { code: "if x == 5\n  print(\"Five\")\n# Missing colon", type: "Syntax Error" },
-        { code: "items = [1, 2]\nprint(items[5])\n# Index out of range", type: "Logic Error" },
-        { code: "input = \"Hello\"\nprint(Input)\n# Case sensitivity", type: "Name Error" },
-        // ... (Repeat until 50)
+    // --- BATCH 1: SYNTAX ERRORS (The "Grammar" of Code) ---
+    { code: "print(\"Hello World' \n# Error: Mismatched quotes", type: "Syntax Error" },
+    { code: "if x == 10\n  print(\"Ten\")\n# Error: Missing colon after if statement", type: "Syntax Error" },
+    { code: "def my_function()\n  return True\n# Error: Missing colon after function header", type: "Syntax Error" },
+    { code: "while True\n  pass\n# Error: Missing colon after while", type: "Syntax Error" },
+    { code: "print(10 + (5 * 2\n# Error: Missing closing parenthesis", type: "Syntax Error" },
+    { code: "for i in range(10)\n  print(i)\n# Error: Missing colon after for loop", type: "Syntax Error" },
+    { code: "class Dog\n  pass\n# Error: Missing colon after class name", type: "Syntax Error" },
+    { code: "x = [1, 2, 3\n# Error: Missing closing bracket", type: "Syntax Error" },
+    { code: "import math as\n# Error: 'as' keyword used without an alias", type: "Syntax Error" },
+    { code: "else:\n  print(\"No\")\n# Error: 'else' without a matching 'if'", type: "Syntax Error" },
+    { code: "x = 5\nif x = 5:\n  print(x)\n# Error: Using single '=' (assignment) instead of '==' (comparison)", type: "Syntax Error" },
+    { code: "y = \"Blue's\"\nprint(y)\n# (Wait, this is valid!) - check the quote logic carefully.", type: "Syntax Error" }, // Trick one
+
+    // --- BATCH 2: NAME ERRORS (The "Who is that?" Error) ---
+    { code: "x = 10\nprint(y)\n# Error: 'y' is not defined", type: "Name Error" },
+    { code: "score = 0\nScor += 1\n# Error: Typo in variable name (Scor vs score)", type: "Name Error" },
+    { code: "print(math.pi)\n# Error: 'math' was never imported", type: "Name Error" },
+    { code: "def start():\n  msg = \"Hi\"\nstart()\nprint(msg)\n# Error: 'msg' is local to the function", type: "Name Error" },
+    { code: "counter = 5\nprint(Counter)\n# Error: Python is case-sensitive", type: "Name Error" },
+    { code: "my_list = [1, 2]\nprint(ml_list[0])\n# Error: Typo in 'my_list'", type: "Name Error" },
+    { code: "ans = calculate_sum(5, 10)\n# Error: Function 'calculate_sum' was never defined", type: "Name Error" },
+    { code: "length = 5\nwidth = 10\narea = lengh * width\n# Error: Typo in 'length'", type: "Name Error" },
+    { code: "import pandas\npd.DataFrame()\n# Error: 'pd' is not defined (missing 'as pd')", type: "Name Error" },
+    { code: "x = 5\ndel x\nprint(x)\n# Error: 'x' was deleted", type: "Name Error" },
+
+    // --- BATCH 3: TYPE ERRORS (The "Mismatched Data" Error) ---
+    { code: "age = \"15\"\nprint(age + 5)\n# Error: Cannot add string and integer", type: "Type Error" },
+    { code: "items = [\"Apple\", \"Pear\"]\nprice = items / 2\n# Error: Cannot divide a list by a number", type: "Type Error" },
+    { code: "len(1050)\n# Error: 'int' has no length (len only works on sequences)", type: "Type Error" },
+    { code: "x = \"Hello\"\nx[0] = \"J\"\n# Error: Strings are immutable; cannot change index 0", type: "Type Error" },
+    { code: "print(\"Score: \" + 10)\n# Error: Must convert 10 to string (str(10))", type: "Type Error" },
+    { code: "tuple1 = (1, 2)\ntuple1.append(3)\n# Error: Tuples don't have an 'append' method", type: "Type Error" },
+    { code: "float(\"Banana\")\n# Error: Cannot convert a non-numeric string to a float", type: "Type Error" },
+    { code: "x = None\nprint(x + 5)\n# Error: Cannot add None and int", type: "Type Error" },
+    { code: "def greet(name):\n  print(\"Hi \" + name)\ngreet(123)\n# Error: Trying to add string to integer in function call", type: "Type Error" },
+    { code: "colors = {1: \"Red\", 2: \"Blue\"}\nprint(colors + \"Green\")\n# Error: Cannot add a string to a dictionary", type: "Type Error" },
+
+    // --- BATCH 4: LOGIC ERRORS (The "Broken Brain" Error) ---
+    { code: "def area(w, h):\n  return w + h\n# Error: Formula should be w * h", type: "Logic Error" },
+    { code: "temp = 30\nif temp > 100:\n  print(\"It's cold\")\n# Error: Logical comparison is backwards", type: "Logic Error" },
+    { code: "for i in range(5):\n  print(\"Hello\")\n# (Wait, this prints 5 times, but I wanted 10)", type: "Logic Error" },
+    { code: "nums = [1, 2, 3]\nprint(nums[3])\n# Error: Index 3 doesn't exist (out of range)", type: "Logic Error" },
+    { code: "avg = 10 + 20 / 2\n# Error: Missing parentheses (should be (10+20)/2)", type: "Logic Error" },
+    { code: "while x < 10:\n  print(x)\n# Error: Infinite loop because x never changes", type: "Logic Error" },
+    { code: "if age >= 18:\n  print(\"Minor\")\nelse:\n  print(\"Adult\")\n# Error: Results are swapped", type: "Logic Error" },
+    { code: "is_sunny = True\nif not is_sunny:\n  print(\"Go outside!\")\n# Error: Logic prevents action on sunny days", type: "Logic Error" },
+    { code: "price = 100\ndiscount = 20\ntotal = price + discount\n# Error: Should be subtracting discount", type: "Logic Error" },
+    { code: "def is_even(n):\n  return n % 2 == 1\n# Error: This checks if it is ODD", type: "Logic Error" },
+
+    // --- BATCH 5: THE FINAL CHALLENGE (Mixed Difficulty) ---
+    { code: "x = 5\n  print(x)\n# Error: Indentation Error (part of Syntax)", type: "Syntax Error" },
+    { code: "my_dict = {\"a\": 1}\nprint(my_dict[\"b\"])\n# Error: Key doesn't exist (KeyError is a Logic/Name cousin)", type: "Logic Error" },
+    { code: "import math\nprint(Math.sqrt(16))\n# Error: Case sensitivity (Name Error)", type: "Name Error" },
+    { code: "print(\"Total: \", 5 * \"10\")\n# Error: Multiplying string by int repeats it, but is it what we want?", type: "Logic Error" },
+    { code: "if 10 > 5\n  print(\"Yes\")\n# Error: Missing colon", type: "Syntax Error" },
+    { code: "user_in = input(\"Enter num: \")\nprint(user_in / 2)\n# Error: Input is always a string", type: "Type Error" },
+    { code: "def add(a, b): return a + b\nprint(Add(1, 2))\n# Error: Function name typo", type: "Name Error" },
+    { code: "x = (5 + 5) * 0\n# Error: Logic - result will always be 0", type: "Logic Error" }
+];
     ];
 
     // Seed the remaining 43 snippets here using the batches we worked on previously.
