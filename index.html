@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Debug Duel: 8th Grade Edition</title>
+    <style>
+        body { font-family: 'Courier New', Courier, monospace; background: #1e1e1e; color: #d4d4d4; padding: 20px; }
+        .container { max-width: 800px; margin: auto; background: #252526; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); }
+        .code-box { background: #000; padding: 20px; border-left: 5px solid #007acc; margin-bottom: 20px; white-space: pre; font-size: 1.1em; color: #9cdcfe; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; color: #4ec9b0; }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        button { padding: 15px; font-size: 1em; cursor: pointer; border: none; border-radius: 4px; background: #3e3e42; color: white; transition: 0.2s; }
+        button:hover { background: #007acc; }
+        .feedback { margin-top: 20px; font-size: 1.2em; text-align: center; height: 30px; }
+        .correct { color: #4ec9b0; }
+        .wrong { color: #f14c4c; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="stats">
+        <span id="progress">Snippet: 1/50</span>
+        <span id="score">Score: 0</span>
+    </div>
+
+    <div class="code-box" id="code-display">
+        // Loading snippet...
+    </div>
+
+    <div class="options">
+        <button onclick="checkAnswer('Syntax Error')">Syntax Error</button>
+        <button onclick="checkAnswer('Name Error')">Name Error</button>
+        <button onclick="checkAnswer('Type Error')">Type Error</button>
+        <button onclick="checkAnswer('Logic Error')">Logic Error</button>
+    </div>
+
+    <div id="feedback" class="feedback"></div>
+</div>
+
+<script>
+    // A sample of the 50 snippets (Logic truncated for brevity, but you can paste in all 50)
+    const snippets = [
+        { code: "print(\"Hello World' \n# Missing closing quote", type: "Syntax Error" },
+        { code: "x = 10\nprint(y)\n# y is not defined", type: "Name Error" },
+        { code: "age = \"15\"\nprint(age + 5)\n# Adding string to int", type: "Type Error" },
+        { code: "def get_area(w, h):\n  return w + h \n# Should be w * h", type: "Logic Error" },
+        { code: "if x == 5\n  print(\"Five\")\n# Missing colon", type: "Syntax Error" },
+        { code: "items = [1, 2]\nprint(items[5])\n# Index out of range", type: "Logic Error" },
+        { code: "input = \"Hello\"\nprint(Input)\n# Case sensitivity", type: "Name Error" },
+        // ... (Repeat until 50)
+    ];
+
+    // Seed the remaining 43 snippets here using the batches we worked on previously.
+
+    let currentIndex = 0;
+    let score = 0;
+
+    function loadSnippet() {
+        if (currentIndex < snippets.length) {
+            document.getElementById('code-display').innerText = snippets[currentIndex].code;
+            document.getElementById('progress').innerText = `Snippet: ${currentIndex + 1}/${snippets.length}`;
+            document.getElementById('feedback').innerText = "";
+        } else {
+            document.getElementById('container').innerHTML = `<h1>Challenge Complete!</h1><h3>Final Score: ${score}/50</h3>`;
+        }
+    }
+
+    function checkAnswer(userChoice) {
+        const feedback = document.getElementById('feedback');
+        if (userChoice === snippets[currentIndex].type) {
+            score++;
+            feedback.innerHTML = "<span class='correct'>✔ Correct!</span>";
+            document.getElementById('score').innerText = `Score: ${score}`;
+        } else {
+            feedback.innerHTML = `<span class='wrong'>✘ Incorrect. It was a ${snippets[currentIndex].type}.</span>`;
+        }
+
+        setTimeout(() => {
+            currentIndex++;
+            loadSnippet();
+        }, 1500);
+    }
+
+    loadSnippet();
+</script>
+
+</body>
+</html>
