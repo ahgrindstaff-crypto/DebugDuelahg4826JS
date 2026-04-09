@@ -6,16 +6,28 @@
     <style>
         body { font-family: 'Courier New', Courier, monospace; background: #0d0d0d; color: #00ff41; padding: 20px; }
         .container { max-width: 850px; margin: auto; background: #1a1a1a; padding: 30px; border: 2px solid #00ff41; border-radius: 8px; box-shadow: 0 0 20px rgba(0, 255, 65, 0.2); position: relative; }
-        .code-box { background: #000; padding: 20px; border-left: 5px solid #00ff41; margin-bottom: 20px; white-space: pre; font-size: 1.2em; color: #00ff41; overflow-x: auto; min-height: 120px; line-height: 1.5; }
-        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; align-items: center; }
-        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        button { padding: 15px; font-size: 1.1em; cursor: pointer; border: 1px solid #00ff41; border-radius: 4px; background: #000; color: #00ff41; transition: all 0.3s; font-family: inherit; }
-        button:hover { background: #00ff41; color: #000; box-shadow: 0 0 10px #00ff41; }
         
-        /* Restart Button Styling */
-        .restart-btn { padding: 5px 10px; font-size: 0.7em; border-color: #ff3131; color: #ff3131; }
-        .restart-btn:hover { background: #ff3131; color: #000; box-shadow: 0 0 10px #ff3131; }
+        /* NEW: High-Visibility Restart Button */
+        .abort-btn { 
+            position: absolute; 
+            top: 15px; 
+            right: 15px; 
+            padding: 8px 15px; 
+            font-size: 0.8em; 
+            background: #000; 
+            color: #ff3131; 
+            border: 1px solid #ff3131; 
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .abort-btn:hover { background: #ff3131; color: #000; box-shadow: 0 0 10px #ff3131; }
 
+        .code-box { background: #000; padding: 20px; border-left: 5px solid #00ff41; margin-bottom: 20px; white-space: pre; font-size: 1.2em; color: #00ff41; overflow-x: auto; min-height: 120px; line-height: 1.5; }
+        .stats { display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; padding-right: 120px; /* Space for the button */ }
+        .options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        button.choice-btn { padding: 15px; font-size: 1.1em; cursor: pointer; border: 1px solid #00ff41; border-radius: 4px; background: #000; color: #00ff41; transition: all 0.3s; font-family: inherit; }
+        button.choice-btn:hover { background: #00ff41; color: #000; box-shadow: 0 0 10px #00ff41; }
+        
         .feedback { margin-top: 20px; font-size: 1.3em; text-align: center; height: 35px; font-weight: bold; }
         .correct { color: #00ff41; text-shadow: 0 0 5px #00ff41; }
         .wrong { color: #ff3131; text-shadow: 0 0 5px #ff3131; }
@@ -31,6 +43,8 @@
 <body>
 
 <div class="container">
+    <button id="global-restart" class="abort-btn hidden" onclick="abortMission()">Restart / Abort</button>
+
     <div id="intro-screen">
         <h1>SYSTEM BRIEFING: ERROR PROTOCOLS</h1>
         <p>Analyze the bug types. Shuffling engine is active to prevent pattern prediction.</p>
@@ -41,21 +55,20 @@
             <tr><td><strong>Type</strong></td><td>Mismatched data types.</td><td class="example">"Score: " + 10</td></tr>
             <tr><td><strong>Logic</strong></td><td>Runs, but answer is wrong.</td><td class="example">area = w + h</td></tr>
         </table>
-        <button class="start-btn" onclick="startGame()">INITIALIZE RANDOMIZED PROTOCOL</button>
+        <button class="start-btn" onclick="startGame()">INITIALIZE PROTOCOL</button>
     </div>
 
     <div id="game-screen" class="hidden">
         <div class="stats">
             <span id="progress">Snippet: 1/50</span>
-            <button class="restart-btn" onclick="abortMission()">ABORT MISSION</button>
             <span id="score">Score: 0</span>
         </div>
         <div class="code-box" id="code-display"></div>
         <div class="options">
-            <button onclick="checkAnswer('Syntax Error')">Syntax Error</button>
-            <button onclick="checkAnswer('Name Error')">Name Error</button>
-            <button onclick="checkAnswer('Type Error')">Type Error</button>
-            <button onclick="checkAnswer('Logic Error')">Logic Error</button>
+            <button class="choice-btn" onclick="checkAnswer('Syntax Error')">Syntax Error</button>
+            <button class="choice-btn" onclick="checkAnswer('Name Error')">Name Error</button>
+            <button class="choice-btn" onclick="checkAnswer('Type Error')">Type Error</button>
+            <button class="choice-btn" onclick="checkAnswer('Logic Error')">Logic Error</button>
         </div>
         <div id="feedback" class="feedback"></div>
     </div>
@@ -64,7 +77,7 @@
         <h1>MISSION COMPLETE</h1>
         <h3 id="final-accuracy" style="text-align:center"></h3>
         <h3 id="final-score" style="text-align:center"></h3>
-        <button class="start-btn" onclick="location.reload()">RE-SHUFFLE & REBOOT</button>
+        <button class="start-btn" onclick="startGame()">RE-SHUFFLE & REBOOT</button>
     </div>
 </div>
 
@@ -137,15 +150,18 @@
         score = 0;
         shuffleArray(snippets);
         document.getElementById('intro-screen').classList.add('hidden');
-        document.getElementById('game-screen').classList.remove('hidden');
         document.getElementById('end-screen').classList.add('hidden');
+        document.getElementById('game-screen').classList.remove('hidden');
+        document.getElementById('global-restart').classList.remove('hidden');
         document.getElementById('score').innerText = "Score: 0";
         loadSnippet();
     }
 
     function abortMission() {
-        if (confirm("Are you sure you want to abort? All current progress will be lost.")) {
+        if (confirm("Reset current mission? All progress will be lost.")) {
             document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('global-restart').classList.add('hidden');
             document.getElementById('intro-screen').classList.remove('hidden');
         }
     }
@@ -178,6 +194,7 @@
 
     function showEndScreen() {
         document.getElementById('game-screen').classList.add('hidden');
+        document.getElementById('global-restart').classList.add('hidden');
         document.getElementById('end-screen').classList.remove('hidden');
         document.getElementById('final-accuracy').innerText = `Accuracy: ${(score/50*100).toFixed(0)}%`;
         document.getElementById('final-score').innerText = `Bugs Eliminated: ${score}/50`;
